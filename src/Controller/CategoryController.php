@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CategoryController extends AbstractController
 {
     #[Route('/api/categories', methods: ['GET'])]
-    public function index(CategoryRepository  $repository): JsonResponse
+    public function getAll(CategoryRepository  $repository): JsonResponse
     {
         $categories = $repository->findAll();
         return $this->json($categories);
