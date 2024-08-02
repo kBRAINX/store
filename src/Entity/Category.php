@@ -8,31 +8,38 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[UniqueEntity('name', message: 'This catégory already exists.')]
+#[Groups(['category.show'])]
 class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product.create', 'category.create', 'product.show', 'category.index'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(min: 3, max: 255)]
     #[Assert\NotBlank]
+    #[Groups(['product.create', 'category.create', 'product.show', 'category.index'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(min: 3, max: 255)]
     #[Assert\Regex(Requirement::ASCII_SLUG)]
+    #[Groups(['category.create', 'category.index'])]
     private ?string $slug = null;
 
     #[ORM\Column]
+    #[Groups(['category.create', 'category.index'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['category.create', 'category.index'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
