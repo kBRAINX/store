@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_EDIT', 'ROLE_GRANT_EDIT')]
     #[Route('/api/products', methods: ['GET'])]
     public function getAll(ProductRepository $repository): JsonResponse
     {
@@ -31,6 +32,7 @@ class ProductController extends AbstractController
         }
     }
 
+    #[IsGranted('ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_EDIT', 'ROLE_GRANT_EDIT')]
     #[Route('/api/products/{id}', methods: ['GET'])]
     public function findOne(Product $product): JsonResponse
     {
@@ -43,6 +45,7 @@ class ProductController extends AbstractController
         }
     }
 
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     #[Route('/api/product', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
     {
@@ -79,8 +82,8 @@ class ProductController extends AbstractController
         }
     }
 
-    #[IsGranted('ROLE_EDIT')]
-    #[Route('/api/product/{id}', methods: ['PATCH'])]
+    #[IsGranted('ROLE_SUPER_ADMIN', 'ROLE_EDIT')]
+    #[Route('/api/products/{id}', methods: ['PATCH'])]
     public function update(Product $product, EntityManagerInterface $em, SerializerInterface $serializer, Request $request): JsonResponse
     {
         try {
@@ -102,7 +105,8 @@ class ProductController extends AbstractController
         }
     }
 
-    #[Route('/api/product/{id}', methods: ['PATCH'])]
+    #[IsGranted('ROLE_GRANT_EDIT', 'ROLE_SUPER_ADMIN')]
+    #[Route('/api/products/{id}', methods: ['PATCH'])]
     public function updateWithCategory(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, Product $product): JsonResponse
     {
         $product->setUpdatedAt(new \DateTimeImmutable());
@@ -131,7 +135,8 @@ class ProductController extends AbstractController
 
     }
 
-    #[Route('/api/product/{id}', methods: ['DELETE'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[Route('/api/products/{id}', methods: ['DELETE'])]
     public function delete(Product $product, EntityManagerInterface $em): JsonResponse
     {
         try {

@@ -26,7 +26,7 @@ class CategoryController extends AbstractController
                 'groups' => ['category.index']
             ]);
         }catch (JsonException $e){
-            return $this->json($e);
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -38,7 +38,7 @@ class CategoryController extends AbstractController
                 'groups' => ['category.show']
             ]);
         }catch(JsonException $e){
-            return $this->json($e);
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -59,7 +59,7 @@ class CategoryController extends AbstractController
                 'groups' => ['category.create']
             ]);
         }catch (JsonException $e){
-            return $this->json($e);
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -77,7 +77,7 @@ class CategoryController extends AbstractController
                 'groups' => ['category.create']
             ]);
         }catch(JsonException $e){
-            return $this->json($e);
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -89,7 +89,7 @@ class CategoryController extends AbstractController
             $em->flush();
             return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }catch (JsonException $e){
-            return $this->json($e);
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 }
