@@ -20,6 +20,7 @@ class UserController extends AbstractController
     public function __construct(private readonly UserPasswordHasherInterface $hasher){
     }
 
+    #[IsGranted('ROLE_SUPER_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/users', methods: ['GET'])]
     public function index(EntityManagerInterface $em): JsonResponse
     {
@@ -67,32 +68,38 @@ class UserController extends AbstractController
         }
     }
 
-    #[IsGranted('ROLE_SUPER_ADMIN')]
+    #[IsGranted('ROLE_SUPER_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/user/{id}', methods: ['PATCH'])]
-    public function changeRole(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, User $user): JsonResponse
+    public function changeRole(Request $request, EntityManagerInterface $em, User $user): JsonResponse
     {
         try {
-            $data = $request->getContent();
-            $serializer->deserialize($data, User::class, 'json', [
-                AbstractNormalizer::OBJECT_TO_POPULATE => $user,
-                AbstractNormalizer::IGNORED_ATTRIBUTES => ['password', 'username', 'email']
-            ]);
-            if (isset(json_decode($data)->role)){ {
-                $role = json_decode($data)->role;
-                if (is_array($role)){
-                    $user->setRoles([$role]);
-                }else{
-                    return $this->json(['error' => 'Role should be an array'], Response::HTTP_BAD_REQUEST);
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['role'])) {
+                $newRole = $data['role'];
+                $allowedRoles = ['ROLE_EDIT', 'ROLE_GRANT_EDIT'];
+
+                if (in_array($newRole, $allowedRoles)) {
+                    $userRoles = $user->getRoles();
+
+                    // Filter out any roles that match the allowed roles
+                    $userRoles = array_filter($userRoles, function($role) use ($allowedRoles) {
+                        return !in_array($role, $allowedRoles);
+                    });
+
+                    $userRoles[] = $newRole;
+                    $user->setRoles(array_unique($userRoles));
+                } else {
+                    return $this->json(['error' => 'Invalid role'], Response::HTTP_BAD_REQUEST);
                 }
-            }
-            }else{
+
+                $em->flush();
+                return $this->json($user, Response::HTTP_OK);
+            } else {
                 return $this->json(['error' => 'Role is required'], Response::HTTP_BAD_REQUEST);
             }
 
-            $em->flush();
-            return $this->json($user, Response::HTTP_OK);
-
-        }catch (JsonException $e){
+        } catch (JsonException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }

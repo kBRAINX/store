@@ -79,11 +79,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $roles[] = 'ROLE_SUPER_ADMIN';
         }
 
+        // Filter out any non-string elements
+        $roles = array_filter($roles, 'is_string');
+
         return array_unique($roles);
     }
 
     /**
-     * @param list<string> $roles
+     * @param array<string> $roles
      */
     public function setRoles(array $roles): static
     {

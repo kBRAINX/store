@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 
-#[IsGranted('ROLE_SUPER_ADMIN')]
+#[IsGranted('ROLE_SUPER_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
 class CategoryController extends AbstractController
 {
     #[Route('/api/categories', methods: ['GET'])]
