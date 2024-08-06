@@ -1,0 +1,22 @@
+nelmio_api_doc:
+  documentation:
+    servers:
+      - url: http://localhost:8000
+        description: API over HTTP (Local server)
+    info:
+      title: My Store API
+      description: This is a local version of the API to store management authorized by the admin.
+      version: 1.0.0
+    components:
+      securitySchemes:
+        Bearer:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+    security:
+      - Bearer: []
+
+  areas:
+    default:
+      path_patterns:
+        - ^/api
