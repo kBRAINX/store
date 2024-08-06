@@ -29,7 +29,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/user', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
+    public function register(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
     {
         $user = new User();
         $data = $request->getContent();
@@ -53,6 +53,7 @@ class UserController extends AbstractController
         return $this->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
     }
 
+    #[IsGranted('ROLE_SUPER_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     public function update(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, User $user): JsonResponse
     {
         try {

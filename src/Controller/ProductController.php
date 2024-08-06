@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
-    #[IsGranted('ROLE_SUPER_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
+    #[IsGranted('ROLE_USER', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/products', methods: ['GET'])]
     public function getAll(ProductRepository $repository): JsonResponse
     {
@@ -32,7 +32,7 @@ class ProductController extends AbstractController
         }
     }
 
-    #[IsGranted('ROLE_ADMIN', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
+    #[IsGranted('ROLE_USER', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/products/{id}', methods: ['GET'])]
     public function findOne(Product $product): JsonResponse
     {
@@ -82,7 +82,7 @@ class ProductController extends AbstractController
         }
     }
 
-    #[IsGranted('any',['ROLE_SUPER_ADMIN', 'ROLE_EDIT'], message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
+    #[IsGranted('ROLE_EDIT', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/products/{id}', methods: ['PATCH'])]
     public function update(Product $product, EntityManagerInterface $em, SerializerInterface $serializer, Request $request): JsonResponse
     {
@@ -105,7 +105,7 @@ class ProductController extends AbstractController
         }
     }
 
-    #[IsGranted('any',['ROLE_GRANT_EDIT', 'ROLE_SUPER_ADMIN'], message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
+    #[IsGranted('ROLE_GRANT_EDIT', message: 'Access denied.', statusCode: Response::HTTP_FORBIDDEN)]
     #[Route('/api/products/{id}', methods: ['PATCH'])]
     public function updateWithCategory(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, Product $product): JsonResponse
     {
