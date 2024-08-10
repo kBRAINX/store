@@ -16,6 +16,16 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    public function getAllAndCountProducts(){
+        $query = $this->createQueryBuilder('c')
+            ->addSelect('COUNT(p.id) as totalProducts')
+            ->leftJoin('c.products', 'p')
+            ->groupBy('c.id')
+            ->orderBy('c.createdAt', 'ASC')
+            ->getQuery();
+        return $query->getResult();
+    }
+
     //    /**
     //     * @return Category[] Returns an array of Category objects
     //     */
